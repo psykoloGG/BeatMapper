@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "BeatMapper",
+	"Description": "Unreal Engine plugin for simple mapping of actions to beat of a song.",
+	"Category": "Other",
+	"CreatedBy": "PsykoloGG",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "BeatMapper",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
