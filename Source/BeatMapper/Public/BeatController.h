@@ -5,7 +5,52 @@
 #include "BeatController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBeat);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuickTimeEvent, UQuickTimeEvent*, QuickTimeEvent);
 
+UENUM()
+enum class EQuickTimeEventStatus : uint8
+{
+    NotStarted,
+	InProgress,
+	Finished
+};
+
+UCLASS()
+class BEATMAPPER_API UQuickTimeEvent : public UObject
+{
+	GENERATED_BODY()
+	
+public:
+	UQuickTimeEvent();
+	
+	// When does quicktime event occur in the song
+	UPROPERTY()
+	float StartTime;
+
+	// How much time before event fails
+	UPROPERTY()
+	float EndTime;
+
+	// Function to be bound to the QuickTime Event
+	UPROPERTY()
+	FOnQuickTimeEvent OnQuickTimeEventStarted;
+
+	UPROPERTY()
+	FOnQuickTimeEvent OnQuickTimeEventHappening;
+
+	UPROPERTY()
+	FOnQuickTimeEvent OnQuickTimeEventFailed;
+	
+	UPROPERTY()
+	EQuickTimeEventStatus Status = EQuickTimeEventStatus::NotStarted;
+
+	UFUNCTION()
+	void Complete()
+    {
+        Status = EQuickTimeEventStatus::Finished;
+    }};
+
+// TO DO: Move this to be a ActorComponent instead for flexibility in Level Design
 UCLASS()
 class BEATMAPPER_API ABeatController : public AActor
 {
@@ -15,6 +60,12 @@ public:
 
 	UFUNCTION()
 	void PlayMusic();
+
+	UFUNCTION()
+	void AddQuickTimeEvent(UQuickTimeEvent* QuickTimeEvent);
+
+	UFUNCTION()
+	float GetCurrentPlaybackTime() const;
 	
 	// BPM (beats per minute) of the music
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Music Settings")
@@ -40,8 +91,11 @@ private:
 	UFUNCTION()
 	void UpdatePlaybackTime(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
 
-	UFUNCTION()
 	void BeatAction(float DeltaTime);
+	void DoQuicktimeEvents();
+
+	UPROPERTY()
+	TArray<UQuickTimeEvent*> QuickTimeEvents;
 	
 	UPROPERTY(VisibleAnywhere)
 	UAudioComponent* AudioComponent;
@@ -56,5 +110,5 @@ private:
 
 	// Time since last beat
 	UPROPERTY()
-	float LastBeatTime = 0.0f;
+	float LastBeatTime = 0.0f;	
 };
